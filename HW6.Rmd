@@ -1,0 +1,43 @@
+---
+title: "HW6"
+author: "Sav"
+date: "2026-04-02"
+output: html_document
+---
+
+```{r}
+library(tidyverse)
+library(lubridate)
+
+# Load the Data
+load("C:/Users/Sav/Desktop/Classes/DATA VIZ/DATA-20260125T234113Z-1-001/DATA/house_prices.rda")
+
+# Create the 'year' column from the 'date' column
+house_prices <- house_prices %>%
+  mutate(year = year(date))
+
+# (a) Facet plot for House Price Index
+ggplot(house_prices, aes(x = year, y = house_price_index)) +
+  geom_line() +
+  facet_wrap(~state) +
+  scale_x_continuous(breaks = c(1980, 2000, 2020),
+                     labels = c("'80", "'00", "'20")) +
+  labs(title = "House Price Index Trends by State", x = "Year", y = "HPI")
+
+# (b) Reshape the data using gather()
+# We use "-" to leave out date, state, year, and house_price_perc 
+house_reshaped <- house_prices %>%
+  gather(key = "measure", value = "value", -date, -state, -year, -house_price_perc)
+
+# (c) Replicate the graph with two lines
+ggplot(house_reshaped, aes(x = year, y = value, color = measure)) +
+  geom_line() +
+  facet_wrap(~state) +
+  scale_x_continuous(breaks = c(1980, 2000, 2020),
+                     labels = c("'80", "'00", "'20")) +
+  labs(title = "HPI vs Unemployment Percentage by State", 
+       x = "Year", 
+       y = "Value")
+
+# (c) I don't believe that the graph is the best choice to compare these variables because the House Price Index is on a scale of hundreds, while Unemployment is a small percentage.
+# So this causes the Unemployment % line to look flat in comparison, and makes it impossible to see actual trends or fluctuations.
